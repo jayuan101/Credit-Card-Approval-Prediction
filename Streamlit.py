@@ -4,7 +4,7 @@
   "metadata": {
     "colab": {
       "provenance": [],
-      "authorship_tag": "ABX9TyPzMXhzKmAW2c4wJcR+RFWU",
+      "authorship_tag": "ABX9TyNTlRiCk65iBV+zNioN9wuA",
       "include_colab_link": true
     },
     "kernelspec": {
@@ -42,7 +42,7 @@
       "metadata": {
         "id": "cqp1ASpLbhLr"
       },
-      "execution_count": 65,
+      "execution_count": 1,
       "outputs": []
     },
     {
@@ -56,10 +56,21 @@
           "base_uri": "https://localhost:8080/"
         },
         "id": "LklVTj_6dck6",
-        "outputId": "f689dba2-dff8-469c-db58-9b118d80fb4f"
+        "outputId": "672baa23-a3fd-45c1-f020-45d9e33fa8d3"
       },
-      "execution_count": 66,
+      "execution_count": 2,
       "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "2024-08-24 00:47:10.700 \n",
+            "  \u001b[33m\u001b[1mWarning:\u001b[0m to view this Streamlit app on a browser, run it with the following\n",
+            "  command:\n",
+            "\n",
+            "    streamlit run /usr/local/lib/python3.10/dist-packages/colab_kernel_launcher.py [ARGUMENTS]\n"
+          ]
+        },
         {
           "output_type": "execute_result",
           "data": {
@@ -68,7 +79,7 @@
             ]
           },
           "metadata": {},
-          "execution_count": 66
+          "execution_count": 2
         }
       ]
     },
@@ -81,7 +92,7 @@
       "metadata": {
         "id": "XPdwVvuCbkP5"
       },
-      "execution_count": 67,
+      "execution_count": 3,
       "outputs": []
     },
     {
@@ -91,10 +102,22 @@
         "page = st.sidebar.selectbox(\"Choose a page\", [\"Analysis\", \"ML Prediction\"])"
       ],
       "metadata": {
-        "id": "cMiGnHjdgSXH"
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "cMiGnHjdgSXH",
+        "outputId": "7b81620c-87d7-4d4b-b0ec-1b929961a4f0"
       },
-      "execution_count": 68,
-      "outputs": []
+      "execution_count": 4,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stderr",
+          "text": [
+            "2024-08-24 00:47:10.767 Session state does not function when running a script without `streamlit run`\n"
+          ]
+        }
+      ]
     },
     {
       "cell_type": "code",
@@ -102,30 +125,29 @@
         "# Step 1: Load and Display CSV\n",
         "if uploaded_csv is not None:\n",
         "    # Read the CSV into a DataFrame\n",
-        "    df = pd.read_csv(uploaded_csv)"
+        "    data = pd.read_csv(uploaded_csv) # Use uploaded_csv instead of data.csv\n"
       ],
       "metadata": {
         "id": "cQnUHZR4gaP2"
       },
-      "execution_count": 69,
+      "execution_count": 5,
       "outputs": []
     },
     {
       "cell_type": "code",
       "source": [
-        "# Display the DataFrame\n",
-        "st.write(\"### Data Preview\")\n",
-        "st.dataframe(df.head())"
+        "# Display DataFrame\n",
+        "st.dataframe(df) # Use 'data' instead of 'df'"
       ],
       "metadata": {
         "colab": {
           "base_uri": "https://localhost:8080/",
-          "height": 183
+          "height": 165
         },
-        "id": "bva8I9AOg-iH",
-        "outputId": "2d51cebe-7730-4ee9-9048-9952640bd043"
+        "id": "ELlmKCgny3QF",
+        "outputId": "044228b2-1637-45c3-8af4-01c9bd9f4af3"
       },
-      "execution_count": 70,
+      "execution_count": 8,
       "outputs": [
         {
           "output_type": "error",
@@ -134,7 +156,7 @@
           "traceback": [
             "\u001b[0;31m---------------------------------------------------------------------------\u001b[0m",
             "\u001b[0;31mNameError\u001b[0m                                 Traceback (most recent call last)",
-            "\u001b[0;32m<ipython-input-70-035226806437>\u001b[0m in \u001b[0;36m<cell line: 3>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0;31m# Display the DataFrame\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[1;32m      2\u001b[0m \u001b[0mst\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mwrite\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m\"### Data Preview\"\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 3\u001b[0;31m \u001b[0mst\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mdataframe\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdf\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mhead\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m)\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
+            "\u001b[0;32m<ipython-input-8-9f54d32cfcca>\u001b[0m in \u001b[0;36m<cell line: 2>\u001b[0;34m()\u001b[0m\n\u001b[1;32m      1\u001b[0m \u001b[0;31m# Display DataFrame\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0;32m----> 2\u001b[0;31m \u001b[0mst\u001b[0m\u001b[0;34m.\u001b[0m\u001b[0mdataframe\u001b[0m\u001b[0;34m(\u001b[0m\u001b[0mdf\u001b[0m\u001b[0;34m)\u001b[0m \u001b[0;31m# Use 'data' instead of 'df'\u001b[0m\u001b[0;34m\u001b[0m\u001b[0;34m\u001b[0m\u001b[0m\n\u001b[0m",
             "\u001b[0;31mNameError\u001b[0m: name 'df' is not defined"
           ]
         }
@@ -143,8 +165,20 @@
     {
       "cell_type": "code",
       "source": [
+        "# Create a chart\n",
+        "st.line_chart(df)"
+      ],
+      "metadata": {
+        "id": "Hv4euVX9zDuf"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
         "# Handle missing values (optional, based on data)\n",
-        "df.dropna(inplace=True)"
+        "df.dropna(inplace = True)"
       ],
       "metadata": {
         "id": "JUobR0O1tWsP"
