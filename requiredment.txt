@@ -4,3 +4,4 @@ StandardScaler
 LabelEncoder
 RandomForestClassifier
 variance_inflation_factor
+matplotlib
