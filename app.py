@@ -1,61 +1,62 @@
-
-# Importing necessary libraries
-import numpy as np
+import streamlit as st
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, LabelEncoder
-from statsmodels.stats.outliers_influence import variance_inflation_factor
-from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import accuracy_score
 
-# Load datasets
-app_data = pd.read_csv("application_record.csv")
-credit_data = pd.read_csv("credit_record.csv")
+# Title
+st.title("📊 Credit Card Approval Prediction")
 
-# Exploratory Data Analysis
-print("Application Data Overview:")
-print(app_data.info())
-print("\nCredit Data Overview:")
-print(credit_data.info())
+# Sidebar
+st.sidebar.header("Navigation")
+page = st.sidebar.radio("Go to:", ["Home", "Application Data", "Credit Record"])
 
-print("\nApplication Data Shape:", app_data.shape)
-print("Credit Data Shape:", credit_data.shape)
+# Load Data
+@st.cache_data
+def load_application_data():
+    return pd.read_csv("application_record.csv")
 
-print("\nApplication Data Description:")
-print(app_data.describe())
-print("\nCredit Data Description:")
-print(credit_data.describe())
+@st.cache_data
+def load_credit_data():
+    return pd.read_csv("credit_record.csv")
 
-# Selecting a random ID from credit_data for filtering
-selected_id = 5069280
-print("\nFiltered Credit Data for Selected ID:")
-print(credit_data[credit_data['ID'] == selected_id])
+# Home Page
+if page == "Home":
+    st.write("""
+    This app explores **Credit Card Approval Prediction** data.
+    - `application_record.csv` contains applicant demographics and employment info.
+    - `credit_record.csv` contains monthly repayment history.
 
-# Merging datasets on 'ID' column
-data = pd.merge(app_data, credit_data, on='ID', how='inner')
-print("\nDuplicate Records in Merged Data:", data.duplicated().sum())
+    Use the sidebar to explore the data.
+    """)
 
-# Checking for duplicates in individual datasets
-print("\nDuplicate Records in Application Data:", app_data.duplicated().sum())
-print("Duplicate Records in Credit Data:", credit_data.duplicated().sum())
+# Application Data Page
+elif page == "Application Data":
+    st.subheader("Application Record")
+    try:
+        app_data = load_application_data()
+        st.write("Shape:", app_data.shape)
+        st.dataframe(app_data.head())
 
-# Function to calculate null values percentage
-def count_null_data(df):
-    return round(df.isna().sum() / df.shape[0] * 100, 2)
+        # Example plot
+        fig, ax = plt.subplots()
+        app_data['CODE_GENDER'].value_counts().plot(kind="bar", ax=ax)
+        ax.set_title("Gender Distribution")
+        st.pyplot(fig)
+    except Exception as e:
+        st.error(f"Error loading application_record.csv: {e}")
 
-print("\nNull Records in Merged Data:")
-print(count_null_data(data))
+# Credit Record Page
+elif page == "Credit Record":
+    st.subheader("Credit Record")
+    try:
+        credit_data = load_credit_data()
+        st.write("Shape:", credit_data.shape)
+        st.dataframe(credit_data.head())
 
-# Dropping less relevant columns (optional)
-data.drop(['OCCUPATION_TYPE'], axis=1, inplace=True)
-
-# Checking dataset statistics after merging
-print("\nMerged Data Columns:")
-print(data.columns)
-print("\nMerged Data Description:")
-print(data.describe())
-
-# Renaming values in 'STATUS' field for clarity
-data['STATUS'].value_counts()
+        # Example overdue status counts
+        fig, ax = plt.subplots()
+        credit_data['STATUS'].value_counts().sort_index().plot(kind="bar", ax=ax)
+        ax.set_title("Credit Status Distribution")
+        st.pyplot(fig)
+    except Exception as e:
+        st.error(f"Error loading credit_record.csv: {e}")
