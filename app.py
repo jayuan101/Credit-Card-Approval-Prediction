@@ -141,8 +141,20 @@ input_data["CNT_FAM_MEMBERS"] = fam_members
 # Prediction
 # -------------------------------
 if st.button("Predict Approval"):
-    input_df = pd.DataFrame([input_data])
-    input_scaled = scaler.transform(input_df)
+    # Create template with all columns from training
+    input_df_full = pd.DataFrame(columns=X.columns)
+    
+    # Fill user inputs
+    for col in input_data:
+        input_df_full.at[0, col] = input_data[col]
+    
+    # Fill missing columns with mean values
+    for col in input_df_full.columns:
+        if pd.isna(input_df_full.at[0, col]):
+            input_df_full.at[0, col] = df_model[col].mean()
+    
+    # Transform and predict
+    input_scaled = scaler.transform(input_df_full)
     prediction = model.predict(input_scaled)[0]
     
     if prediction == 0:
