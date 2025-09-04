@@ -1,46 +1,89 @@
-# Credit-Card-Approval-Prediction
+# Credit Card Approval Prediction
 
+A dataset and toolkit for predicting credit card approval using machine learning.
 
-A Credit Card Dataset for Machine Learning!
-Don't ask me where this data come from, the answer is I don't know!
+---
 
-Context
-Credit score cards are a common risk control method in the financial industry. It uses personal information and data submitted by credit card applicants to predict the probability of future defaults and credit card borrowings. The bank is able to decide whether to issue a credit card to the applicant. Credit scores can objectively quantify the magnitude of risk.
- 
-Generally speaking, credit score cards are based on historical data. Once encountering large economic fluctuations. Past models may lose their original predictive power. Logistic model is a common method for credit scoring. Because Logistic is suitable for binary classification tasks and can calculate the coefficients of each feature. In order to facilitate understanding and operation, the score card will multiply the logistic regression coefficient by a certain value (such as 100) and round it.
- 
-At present, with the development of machine learning algorithms. More predictive methods such as Boosting, Random Forest, and Support Vector Machines have been introduced into credit card scoring. However, these methods often do not have good transparency. It may be difficult to provide customers and regulators with a reason for rejection or acceptance.
+## Table of Contents
 
-Task
-Build a machine learning model to predict if an applicant is 'good' or 'bad' client, different from other tasks, the definition of 'good' or 'bad' is not given. You should use some techique, such as vintage analysis to construct you label. Also, unbalance data problem is a big problem in this task.
+- [Project Overview](#project-overview)
+- [Dataset Details](#dataset-details)
+- [Objectives](#objectives)
+- [Features & Challenges](#features--challenges)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Running the Notebook / App](#running-the-notebook--app)
+- [Project Structure](#project-structure)
+- [Suggested Enhancements](#suggested-enhancements)
+- [License & Acknowledgements](#license--acknowledgements)
 
-Content & Explanation
-There're two tables could be merged by ID:
+---
 
-application_record.csv		
-Feature name	Explanation	Remarks
-ID	Client number	
-CODE_GENDER	Gender	
-FLAG_OWN_CAR	Is there a car	
-FLAG_OWN_REALTY	Is there a property	
-CNT_CHILDREN	Number of children	
-AMT_INCOME_TOTAL	Annual income	
-NAME_INCOME_TYPE	Income category	
-NAME_EDUCATION_TYPE	Education level	
-NAME_FAMILY_STATUS	Marital status	
-NAME_HOUSING_TYPE	Way of living	
-DAYS_BIRTH	Birthday	Count backwards from current day (0), -1 means yesterday
-DAYS_EMPLOYED	Start date of employment	Count backwards from current day(0). If positive, it means the person currently unemployed.
-FLAG_MOBIL	Is there a mobile phone	
-FLAG_WORK_PHONE	Is there a work phone	
-FLAG_PHONE	Is there a phone	
-FLAG_EMAIL	Is there an email	
-OCCUPATION_TYPE	Occupation	
-CNT_FAM_MEMBERS	Family size	
-credit_record.csv		
-Feature name	Explanation	Remarks
-ID	Client number	
-MONTHS_BALANCE	Record month	The month of the extracted data is the starting point, backwards, 0 is the current month, -1 is the previous month, and so on
-STATUS	Status	0: 1-29 days past due 1: 30-59 days past due 2: 60-89 days overdue 3: 90-119 days overdue 4: 120-149 days overdue 5: Overdue or bad debts, write-offs for more than 150 days C: paid off that month X: No loan for the month
-Related data : Credit Card Fraud Detection
-Related competition: Home Credit Default Risk
+## Project Overview
+
+This repository includes:
+
+- **`application_record.csv`**: Contains client demographics and employment history.
+- **`credit_record.csv`**: Monthly payment status over time, indicating overdue patterns and repayment reliability.
+- **Use Case**: Build ML models to assess the likelihood of credit card approval based on historical behavior.
+
+---
+
+## Dataset Details
+
+### 1. `application_record.csv`
+
+Merged via a shared `ID` with `credit_record.csv`. Key columns include:
+
+- `CODE_GENDER`, `FLAG_OWN_CAR`, `FLAG_OWN_REALTY`
+- `CNT_CHILDREN`, `AMT_INCOME_TOTAL`, `NAME_INCOME_TYPE`, `NAME_EDUCATION_TYPE`
+- `NAME_FAMILY_STATUS`, `NAME_HOUSING_TYPE`, `DAYS_BIRTH`, `DAYS_EMPLOYED`
+- `FLAG_MOBIL`, `FLAG_WORK_PHONE`, `FLAG_PHONE`, `FLAG_EMAIL`
+- `OCCUPATION_TYPE`, `CNT_FAM_MEMBERS`
+
+### 2. `credit_record.csv`
+
+Tracks monthly repayment status, with values:
+
+- `0`: 1–29 days past due
+- `1`: 30–59 days overdue
+- `2`: 60–89 days past due
+- `3`: 90–119 days past due
+- `4`: 120–149 days overdue
+- `5`: Overdue/write-off >150 days
+- `C`: Paid off this month
+- `X`: No loan that month
+
+---
+
+## Objectives
+
+- **Merge** both datasets using `ID` for comprehensive client profiles.
+- **Engineer features** such as default frequency, trend of late payments, or flags for ‘good’ vs. ‘bad’ clients.
+- **Address class imbalance** and define an appropriate labeling strategy—“good” vs. “bad”—e.g., via vintage analysis or threshold-based criteria.
+
+---
+
+## Features & Challenges
+
+- **Class imbalance**: A typical challenge in credit behavior datasets.
+- **Label ambiguity**: No explicit “good/bad” label; needs creative derivation such as past-due thresholds or recency analysis.
+- **Temporal nature**: Leverage monthly patterns to derive meaningful features.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Python 3.7+
+- Jupyter Notebook (or your preferred editor)
+- (Optional) Virtual environment tool: `venv` or `conda`
+
+### Installation
+
+```bash
+git clone https://github.com/jayuan101/Credit-Card-Approval-Prediction.git
+cd Credit-Card-Approval-Prediction
+pip install -r requiredment.txt
