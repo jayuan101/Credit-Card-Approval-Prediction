@@ -1,62 +1,81 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler, LabelEncoder
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+
+# -------------------------------
 # Title
-st.title("📊 Credit Card Approval Prediction")
+# -------------------------------
+st.title("💳 Credit Card Approval Prediction")
 
-# Sidebar
-st.sidebar.header("Navigation")
-page = st.sidebar.radio("Go to:", ["Home", "Application Data", "Credit Record"])
-
+# -------------------------------
 # Load Data
+# -------------------------------
 @st.cache_data
-def load_application_data():
-    return pd.read_csv("application_record.csv")
+def load_data():
+    df = pd.read_csv("application_record.csv")
+    return df
 
-@st.cache_data
-def load_credit_data():
-    return pd.read_csv("credit_record.csv")
+df = load_data()
+st.write("Dataset Shape:", df.shape)
+st.write(df.head())
 
-# Home Page
-if page == "Home":
-    st.write("""
-    This app explores **Credit Card Approval Prediction** data.
-    - `application_record.csv` contains applicant demographics and employment info.
-    - `credit_record.csv` contains monthly repayment history.
+# -------------------------------
+# Preprocessing
+# -------------------------------
+# Example: Encode categorical columns
+df = df.copy()
+label_encoders = {}
+for col in df.select_dtypes(include=["object"]).columns:
+    le = LabelEncoder()
+    df[col] = le.fit_transform(df[col].astype(str))
+    label_encoders[col] = le
 
-    Use the sidebar to explore the data.
-    """)
+# Define features (X) and target (y)
+# ⚠️ Replace 'TARGET' with your actual label column name
+if "TARGET" in df.columns:
+    X = df.drop(columns=["TARGET"])
+    y = df["TARGET"]
 
-# Application Data Page
-elif page == "Application Data":
-    st.subheader("Application Record")
-    try:
-        app_data = load_application_data()
-        st.write("Shape:", app_data.shape)
-        st.dataframe(app_data.head())
+    # Split
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
-        # Example plot
-        fig, ax = plt.subplots()
-        app_data['CODE_GENDER'].value_counts().plot(kind="bar", ax=ax)
-        ax.set_title("Gender Distribution")
-        st.pyplot(fig)
-    except Exception as e:
-        st.error(f"Error loading application_record.csv: {e}")
+    # Scale
+    scaler = StandardScaler()
+    X_train = scaler.fit_transform(X_train)
+    X_test = scaler.transform(X_test)
 
-# Credit Record Page
-elif page == "Credit Record":
-    st.subheader("Credit Record")
-    try:
-        credit_data = load_credit_data()
-        st.write("Shape:", credit_data.shape)
-        st.dataframe(credit_data.head())
+    # Model
+    model = RandomForestClassifier(random_state=42)
+    model.fit(X_train, y_train)
 
-        # Example overdue status counts
-        fig, ax = plt.subplots()
-        credit_data['STATUS'].value_counts().sort_index().plot(kind="bar", ax=ax)
-        ax.set_title("Credit Status Distribution")
-        st.pyplot(fig)
-    except Exception as e:
-        st.error(f"Error loading credit_record.csv: {e}")
+    # Evaluate
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    st.success(f"Model Accuracy: {acc:.2f}")
+
+    # -------------------------------
+    # User Input for Prediction
+    # -------------------------------
+    st.subheader("🔮 Try Your Own Input")
+
+    # Build inputs dynamically
+    input_data = {}
+    for col in X.columns:
+        val = st.number_input(f"{col}", value=float(df[col].mean()))
+        input_data[col] = val
+
+    if st.button("Predict"):
+        input_df = pd.DataFrame([input_data])
+        input_scaled = scaler.transform(input_df)
+        prediction = model.predict(input_scaled)[0]
+        st.write("✅ Prediction:", "Approved" if prediction == 1 else "Denied")
+
+else:
+    st.error("Dataset does not contain a 'TARGET' column for labels.")
