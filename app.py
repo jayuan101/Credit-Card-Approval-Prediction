@@ -38,13 +38,14 @@ df = load_and_prepare()
 # -------------------------------
 df_model = df.copy()
 
-# Convert categorical to numeric
+# Encode categorical variables and store encoders
 label_encoders = {}
 for col in df_model.select_dtypes(include=["object"]).columns:
     le = LabelEncoder()
     df_model[col] = le.fit_transform(df_model[col].astype(str))
     label_encoders[col] = le
 
+# Features and Target
 X = df_model.drop(columns=["ID","TARGET"])
 y = df_model["TARGET"]
 
@@ -72,20 +73,28 @@ st.success(f"Model Accuracy: {acc:.2f}")
 # -------------------------------
 st.subheader("📝 Your Information")
 
-# Mapping human-friendly questions to column names
 input_data = {}
 
 # Gender
-gender = st.radio("What is your gender?", ("Male", "Female"))
-input_data["CODE_GENDER"] = 0 if gender=="Male" else 1
+gender_options = df["CODE_GENDER"].unique().tolist()
+gender_map = {0:"Male",1:"Female"}  # map numeric to human readable
+gender_reverse = {v:k for k,v in gender_map.items()}
+gender = st.radio("What is your gender?", list(gender_reverse.keys()))
+input_data["CODE_GENDER"] = gender_reverse[gender]
 
 # Car ownership
-car = st.radio("Do you own a car?", ("Yes", "No"))
-input_data["FLAG_OWN_CAR"] = 1 if car=="Yes" else 0
+car_options = df["FLAG_OWN_CAR"].unique().tolist()
+car_map = {0:"No",1:"Yes"}
+car_reverse = {v:k for k,v in car_map.items()}
+car = st.radio("Do you own a car?", list(car_reverse.keys()))
+input_data["FLAG_OWN_CAR"] = car_reverse[car]
 
 # Real estate ownership
-realty = st.radio("Do you own real estate?", ("Yes", "No"))
-input_data["FLAG_OWN_REALTY"] = 1 if realty=="Yes" else 0
+realty_options = df["FLAG_OWN_REALTY"].unique().tolist()
+realty_map = {0:"No",1:"Yes"}
+realty_reverse = {v:k for k,v in realty_map.items()}
+realty = st.radio("Do you own real estate?", list(realty_reverse.keys()))
+input_data["FLAG_OWN_REALTY"] = realty_reverse[realty]
 
 # Children
 children = st.number_input("Number of children", min_value=0, max_value=20, value=0)
@@ -96,33 +105,29 @@ income = st.number_input("Annual Income (USD)", min_value=0, value=50000)
 input_data["AMT_INCOME_TOTAL"] = income
 
 # Education
-education = st.selectbox("Education Level", ["Secondary / High School", "Higher Education", "Incomplete Higher", "Lower Secondary", "Academic Degree"])
-# encode with LabelEncoder from dataset
-le_edu = label_encoders.get("NAME_EDUCATION_TYPE")
-if le_edu:
-    input_data["NAME_EDUCATION_TYPE"] = le_edu.transform([education])[0]
-else:
-    input_data["NAME_EDUCATION_TYPE"] = 0
+education_options = df["NAME_EDUCATION_TYPE"].unique().tolist()
+education_map = {i:label for i,label in enumerate(label_encoders["NAME_EDUCATION_TYPE"].classes_)}
+education_reverse = {v:k for k,v in education_map.items()}
+education = st.selectbox("Education Level", list(education_reverse.keys()))
+input_data["NAME_EDUCATION_TYPE"] = education_reverse[education]
 
 # Family status
-family = st.selectbox("Family Status", ["Single / not married", "Married", "Civil marriage", "Separated", "Widow"])
-le_fam = label_encoders.get("NAME_FAMILY_STATUS")
-if le_fam:
-    input_data["NAME_FAMILY_STATUS"] = le_fam.transform([family])[0]
-else:
-    input_data["NAME_FAMILY_STATUS"] = 0
+family_options = df["NAME_FAMILY_STATUS"].unique().tolist()
+family_map = {i:label for i,label in enumerate(label_encoders["NAME_FAMILY_STATUS"].classes_)}
+family_reverse = {v:k for k,v in family_map.items()}
+family = st.selectbox("Family Status", list(family_reverse.keys()))
+input_data["NAME_FAMILY_STATUS"] = family_reverse[family]
 
 # Housing type
-housing = st.selectbox("Housing Type", ["House / apartment", "Municipal apartment", "Rented apartment", "With parents", "Co-op apartment", "Office apartment", "Hotel"])
-le_housing = label_encoders.get("NAME_HOUSING_TYPE")
-if le_housing:
-    input_data["NAME_HOUSING_TYPE"] = le_housing.transform([housing])[0]
-else:
-    input_data["NAME_HOUSING_TYPE"] = 0
+housing_options = df["NAME_HOUSING_TYPE"].unique().tolist()
+housing_map = {i:label for i,label in enumerate(label_encoders["NAME_HOUSING_TYPE"].classes_)}
+housing_reverse = {v:k for k,v in housing_map.items()}
+housing = st.selectbox("Housing Type", list(housing_reverse.keys()))
+input_data["NAME_HOUSING_TYPE"] = housing_reverse[housing]
 
 # Age (in years)
 age = st.number_input("Age", min_value=18, max_value=100, value=30)
-input_data["DAYS_BIRTH"] = -age*365  # dataset uses negative days
+input_data["DAYS_BIRTH"] = -age*365
 
 # Years employed
 employed = st.number_input("Years employed", min_value=0, max_value=50, value=5)
